@@ -7,8 +7,8 @@
 #define ACK 1
 #define NOACK 0
 
-#define accWriteAddr 0x9D
-#define accReadAddr 0x1D
+#define writeAddr 0x1D
+#define readAddr 0x9D
 
 #ifndef TWI_H_
 #define TWI_H_

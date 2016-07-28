@@ -11,9 +11,12 @@
 #define UART_H_
 
 void usartInit(void);
-void ucToPcSend(char* data);
 void uartStart(void);
+void displayString(char* data);
+void displayInt(int value);
+uint32_t wait4input(char* prompt);
 
 
+//m
 
 #endif /* UART_H_ */

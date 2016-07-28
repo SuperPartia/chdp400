@@ -1,6 +1,7 @@
 #include "includes.h"
 
 char* usart_buffer;
+volatile uint32_t uartVal = 0;
 
 void usartInit(void)
 {
@@ -27,9 +28,32 @@ void usartInit(void)
 
 ISR(USART_RXC_vect)
 {
-	char ReceivedByte;
-	ReceivedByte = UDR; // Fetch the received byte value into the variable "ByteReceived"
-	UDR = ReceivedByte; // Echo back the received byte back to the computer
+	char receivedByte;
+	receivedByte = UDR; // Fetch the received byte value into the variable "ByteReceived"
+
+	if (_readingUart)
+	{
+//		if (receivedByte == 0x0D || receivedByte == 0x0A || receivedByte == 0x0A)
+//		{
+//			displayString("");
+//			_readingUart = -1;
+//			return;
+//		}
+//		else
+		if (1)
+		{
+			if (receivedByte == 0x08 || receivedByte == 0x1B)
+			{
+				displayString("");
+				_readingUart = false;
+			}
+			else {
+
+				UDR = receivedByte; // Echo back the received byte back to the computer
+			}
+			uartVal = 10 * uartVal + (receivedByte - '0');
+		}
+	}
 }
 
 
@@ -51,7 +75,24 @@ ISR(USART_UDRE_vect){
 //--------------------------------------------------------------
 
 
-void ucToPcSend(char* data){
+void displayInt(int value)
+{
+	char* data = (char*) malloc(30);
+
+	//displayString("dec");
+	sprintf(data, "%d", value);
+	displayString(data);
+
+	//displayString("hex");
+	//value = (value/16)*10 + value-(value/16)*16;
+	//sprintf(data, "%d", value);
+	//displayString(data);
+
+}
+
+void displayString(char* data)
+{
+
 
 	while(tx_flag);
 	strncpy(usart_buffer, data, uartBufferSize);
@@ -69,13 +110,29 @@ void ucToPcSend(char* data){
 
 	UCSRB |= (1<<UDRIE);
 
+
 }
 
 void uartStart(void)
 {
 	usartInit();
-	ucToPcSend("*chd400 initialized*");
+	displayString("*chd400 initialized*");
 }
 
 //--------------------------------------------------------------
 
+uint32_t wait4input(char* prompt)
+{
+	uartVal = 0;
+	displayString(prompt);
+	_readingUart = true;
+	while (_readingUart != 0 );
+		if(_readingUart == -1)
+		{
+		_readingUart = true;
+		uartVal = 0;
+		displayString(prompt);
+		}
+	_readingUart = false;
+	return uartVal;
+}
