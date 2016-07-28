@@ -91,7 +91,7 @@ char test()
 	_delay_ms(2000);
 	int propperAddr = -1;
 
-	for(i; i<=0xFF; i++)
+	for(i=0; i<=0xFF; i++)
 	{
 
 	twiStart();
