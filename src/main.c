@@ -2,17 +2,15 @@
 #include "includes.h"
 #define F_CPU 1000000
 
-volatile uint8_t _readingUart = false;
-volatile uint16_t freq = 0;
-volatile uint16_t count = 0;
-volatile uint8_t mode = 0;
-
 
 int main(void)
 {
+	uint16_t freq = 0;
+	uint8_t mode = 0;
+	int count = 0;
 
 	initAll();
-	runConfig();
+	runConfig(&freq, &count, &mode);
 
 	while(1){
 	}
@@ -31,7 +29,7 @@ void initAll()
 	//DDR na diodki, nie pamiętam na jakim porcie
 }
 
-void runConfig()
+void runConfig(uint16_t *freq, int *count, uint8_t *mode)
 {
 
 	freq = wait4input("sample frequency (in kHz):");
