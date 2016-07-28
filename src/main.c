@@ -10,7 +10,8 @@ int main(void)
 	int count = 0;
 
 	initAll();
-	runConfig(&freq, &count, &mode);
+	//runConfig(&freq, &count, &mode);
+	startTimer1(4);
 
 	while(1){
 	}
@@ -27,6 +28,7 @@ void initAll()
 	uartStart();
 	adcInit();
 	//DDR na diodki, nie pamiętam na jakim porcie
+	initTimer1(15624);
 }
 
 void runConfig(uint16_t *freq, int *count, uint8_t *mode)
@@ -42,5 +44,4 @@ void runConfig(uint16_t *freq, int *count, uint8_t *mode)
 	displayInt(count);
 	displayString("mode =");
 	displayInt(mode);
-
 }

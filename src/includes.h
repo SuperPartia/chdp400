@@ -7,6 +7,7 @@
 #include "adc.h"
 #include "uart.h"
 #include "twi.h"
+#include "timers.h"
 
 //defines
 #define red 7
