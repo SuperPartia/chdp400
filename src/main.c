@@ -12,8 +12,10 @@ int main(void)
 	initAll();
 	//runConfig(&freq, &count, &mode);
 	startTimer1(4);
+	startTimer0(5);
 
 	while(1){
+
 	}
 }
 
@@ -29,6 +31,7 @@ void initAll()
 	adcInit();
 	//DDR na diodki, nie pamiętam na jakim porcie bo jestem debilem
 	initTimer1(15624);
+	initTimer0(255);
 }
 
 void runConfig(uint16_t *freq, int *count, uint8_t *mode)

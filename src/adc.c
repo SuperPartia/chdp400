@@ -25,9 +25,6 @@ unsigned int adcRead(_Bool channel)
 //{
 //	ADCSRA &= ~(1<<ADIE);
 //	ADCSRA &= ~(1<<ADSC);
-//char* data = 0;
-//sprintf(data, "%d", ADC);
-////ucToPcSend("kurwa");
 //}
 
 
