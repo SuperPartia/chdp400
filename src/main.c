@@ -27,7 +27,7 @@ void initAll()
 
 	uartStart();
 	adcInit();
-	//DDR na diodki, nie pamiętam na jakim porcie
+	//DDR na diodki, nie pamiętam na jakim porcie bo jestem debilem
 	initTimer1(15624);
 }
 
