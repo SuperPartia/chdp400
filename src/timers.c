@@ -7,6 +7,11 @@
 
 #include "includes.h"
 
+
+volatile bool _samplingReady = false;
+volatile bool _setup = false;
+volatile bool _working = true;
+
 /*
 0 0 0 No clock source. (Timer/Counter stopped)
 0 0 1 clk /1 (No prescaling)
@@ -16,17 +21,38 @@
 1 0 1 clk /1024 (From prescaler)
 */
 
-void initTimer0(uint16_t counts)
+volatile uint8_t cycles = 0;
+volatile uint8_t sampleResid;
+
+volatile uint8_t measureCycles = 1;
+volatile uint16_t measOCR1A = 0;
+volatile uint8_t cooldownCycles = 1;
+volatile uint16_t coolOCR1A = 0;
+
+//TIMER 0
+void initTimer0()
 {
-	//TCNT0 = counts; //15624 for 1s
-	// Mode 4, CTC on OCR1A
 	TIMSK |= (1 << TOIE0);
 	//Set interrupt on compare match
 }
 
-void startTimer0(uint8_t prescaler)
+void startTimer0(uint16_t samplingT)
 {
-	TCCR0 |= prescaler;
+	//t = 1/frequ 100 us 500m
+	//t = TCNT0*presc / 1 000 000  0,065536
+
+	float t = samplingT;
+	while (floor(t) >= 262)
+	{
+		t -= 262.1;
+		cycles++;
+	}
+	sampleResid = floor(t*0xFF/262.1);
+	//resid - t
+	//256   - 262.1
+	TCNT0 = 0xFF - sampleResid;
+	TCCR0 |= 5; //0,262144
+
 }
 
 uint16_t stopTimer0()
@@ -35,18 +61,62 @@ uint16_t stopTimer0()
 	return OCR1A;
 }
 
-void initTimer1(uint16_t counts)
+
+ISR (TIMER0_OVF_vect)  // timer0 overflow interrupt
 {
-	OCR1A = counts; //15624 for 1s
+
+	static uint8_t subCounter = 0;
+	if(subCounter == cycles)
+	{
+		TCNT0 = 0xFF - sampleResid;
+		subCounter = 0;
+		if (_working == true)
+		{
+			if (_samplingReady == false && _setup == false)
+			{
+				_samplingReady = true;
+			}
+			else
+			{
+				displayString("error!");
+			}
+		}
+		return;
+	}
+	subCounter ++;
+}
+
+//TIMER 1
+
+void initTimer1()
+{
 	TCCR1B |= (1 << WGM12);
 	// Mode 4, CTC on OCR1A
 	TIMSK |= (1 << OCIE1A);
 	//Set interrupt on compare match
 }
 
-void startTimer1(uint8_t prescaler)
+void startTimer1(int measurementT, int cooldownT)
 {
-	TCCR1B |= prescaler;
+	float T = measurementT;
+	while (floor(T) >= 4194)
+	{
+		T /= 2;
+		measureCycles *= 2;
+	}
+	T /= 4194.5;
+	measOCR1A = T*0xFFFF;
+	T = cooldownT;
+	while (floor(T) >= 4194)
+	{
+		T /= 2;
+		cooldownCycles *= 2;
+	}
+	T /= 4194.5;
+	coolOCR1A = T * 0xFFFF;
+
+	OCR1A = floor(measOCR1A); //15624 for 1s
+	TCCR1B |= 3;
 }
 
 uint16_t stopTimer1()
@@ -55,19 +125,20 @@ uint16_t stopTimer1()
 	return OCR1A;
 }
 
-ISR (TIMER1_COMPA_vect,ISR_BLOCK)
+ISR (TIMER1_COMPA_vect)
 {
-    //displayString("ło kurwa, tajmer!");
-}
-ISR (TIMER0_OVF_vect,ISR_BLOCK)  // timer0 overflow interrupt
-{
-	static uint8_t sub_counter = 0;
-	sub_counter++;
-	if(sub_counter == 4)
+	static uint8_t subCounter1 = 1;
+	if((_working && (subCounter1 == measureCycles)) || (!_working && (subCounter1 == cooldownCycles)))
 	{
-	//displayString("o chuj, tajmer0!");
-	sub_counter = 0;
+
+		_samplingReady = true;
+		subCounter1 = 1;
+		_working ^= 1;
+		OCR1A = _working ? measOCR1A : coolOCR1A;
+		return;
 	}
+	subCounter1 ++;
 }
+
 
 

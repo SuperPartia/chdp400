@@ -8,12 +8,12 @@
 #ifndef TIMER_H_
 #define TIMER_H_
 
-void initTimer0(uint16_t counts);
-void startTimer0(uint8_t prescaler);
+void initTimer0();
+void startTimer0(uint16_t samplingT);
 uint16_t stopTimer0();
 
-void initTimer1(uint16_t counts);
-void startTimer1(uint8_t prescaler);
+void initTimer1();
+void startTimer1(int measurementPeriod, int cooldownT);
 uint16_t stopTimer1();
 
 #endif /* TIMER_H_ */

@@ -1,8 +1,9 @@
 #include "includes.h"
 
-char* usart_buffer;
+volatile char* usart_buffer;
 volatile uint8_t _readingUart = false;
 volatile uint32_t uartVal = 0;
+volatile unsigned int usart_buffer_ind = 0;
 
 void usartInit(void)
 {
@@ -63,7 +64,7 @@ ISR(USART_RXC_vect)
 
 	ISR(USART_UDRE_vect){
 
-		static unsigned int usart_buffer_ind = 0;
+		//static unsigned int usart_buffer_ind = 0;
 		if(usart_buffer[usart_buffer_ind]!= 0){
 			UDR = usart_buffer[usart_buffer_ind++];
 
@@ -79,11 +80,12 @@ ISR(USART_RXC_vect)
 
 	void displayInt(int value)
 	{
-		char* data = (char*) malloc(30);
+		//char* data = (char*) malloc(30);
 
 		//displayString("dec");
-		sprintf(data, "%d", value);
-		displayString(data);
+		while(usart_buffer_ind);
+		sprintf(usart_buffer, "%d", value);
+		sendToUc(true);
 
 		//displayString("hex");
 		//value = (value/16)*10 + value-(value/16)*16;
@@ -91,25 +93,57 @@ ISR(USART_RXC_vect)
 		//displayString(data);
 
 	}
-
 	void displayString(char* data)
+	{
+		while(usart_buffer_ind);
+		strncpy(usart_buffer, data, uartBufferSize);
+		sendToUc(true);
+	}
+
+	void sendData(uint16_t data, bool endline)
+	{
+		while(usart_buffer_ind);
+//		uint8_t i;
+//		for(i=0; i<xSize; i++)
+//		{
+//			while(usart_buffer_ind);
+//			sprintf(usart_buffer, "%d", data[i]);
+//		}
+		sprintf(usart_buffer, "%d", data);
+		while(usart_buffer_ind);
+		if (endline)
+		strncpy(usart_buffer, ";", uartBufferSize);
+		else
+		strncpy(usart_buffer, " ", uartBufferSize);
+		sendToUc(true); //with end line
+	}
+
+	void sendToUc(bool newLine)
 	{
 
 
 		while(tx_flag);
-		strncpy(usart_buffer, data, uartBufferSize);
 		unsigned char z;
 		for(z=0; z<uartBufferSize; z++){
 			if(usart_buffer[z]==0){
-				usart_buffer[z]   = 13;  //CR (Carrige Return)
-				usart_buffer[z+1]  = 10; // LF (Line Feed)
-				usart_buffer[z+2]  = 0;  //string end
+				if (newLine)
+				{
+					usart_buffer[z]   = 13;  //CR (Carrige Return)
+					usart_buffer[z+1]  = 10; // LF (Line Feed)
+					usart_buffer[z+2]  = 0;  //string end
+				}
+				else
+				{
+					usart_buffer[z]   = 32;  //SPACE
+					usart_buffer[z+1]  = 0;  //string end
+				}
 				break;
 			}
 		}
 
 		while (!(UCSRA & (1<<UDRE)));
 
+		usart_buffer_ind = 0;
 		UCSRB |= (1<<UDRIE);
 
 

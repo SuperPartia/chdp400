@@ -13,7 +13,6 @@ void adcInit()
 }
 
 unsigned int adcRead(_Bool channel)
-
 {
 	PORTC = channel<<analog_switch;
 	ADCSRA |= (1<<ADSC);
