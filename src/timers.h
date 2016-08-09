@@ -2,7 +2,7 @@
  * timer.h
  *
  *  Created on: 28 lip 2016
- *      Author: nkubiak
+ *      Author: nkubiakCiota
  */
 
 #ifndef TIMER_H_

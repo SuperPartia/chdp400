@@ -58,7 +58,8 @@ void startTimer0(uint16_t samplingT)
 uint16_t stopTimer0()
 {
 	TCCR0 &= ~(1 << CS00) & ~(1 << CS01) & ~(1 << CS02);
-	return OCR1A;
+	TCNT0 = 0;
+	return TCNT0;
 }
 
 
@@ -70,8 +71,8 @@ ISR (TIMER0_OVF_vect)  // timer0 overflow interrupt
 	{
 		TCNT0 = 0xFF - sampleResid;
 		subCounter = 0;
-		if (_working == true)
-		{
+//		if (_working == true)
+//		{
 			if (_samplingReady == false && _setup == false)
 			{
 				_samplingReady = true;
@@ -80,7 +81,7 @@ ISR (TIMER0_OVF_vect)  // timer0 overflow interrupt
 			{
 				displayString("error!");
 			}
-		}
+//		}
 		return;
 	}
 	subCounter ++;
@@ -122,6 +123,7 @@ void startTimer1(int measurementT, int cooldownT)
 uint16_t stopTimer1()
 {
 	TCCR1B &= ~(1 << CS12) & ~(1 << CS10) & ~(1 << CS11);
+	OCR1A = 0;
 	return OCR1A;
 }
 
@@ -131,8 +133,12 @@ ISR (TIMER1_COMPA_vect)
 	if((_working && (subCounter1 == measureCycles)) || (!_working && (subCounter1 == cooldownCycles)))
 	{
 
-		_samplingReady = true;
 		subCounter1 = 1;
+		if (_working)
+		{
+		repeatHappened = true;
+		repeatsCount++;
+		}
 		_working ^= 1;
 		OCR1A = _working ? measOCR1A : coolOCR1A;
 		return;

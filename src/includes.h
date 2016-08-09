@@ -25,5 +25,8 @@ volatile uint32_t uartVal;
 volatile extern bool _samplingReady;
 volatile extern bool _setup;
 volatile extern bool _working;
+volatile extern uint8_t repeatsCount;
+volatile extern bool repeatHappened;
+
 
 

@@ -54,7 +54,7 @@ ISR(USART_RXC_vect)
 				UDR = receivedByte; // Echo back the received byte back to the computer
 			}
 			uartVal = 10 * uartVal + (receivedByte - '0');
-					}
+		}
 		}
 	}
 
@@ -100,22 +100,18 @@ ISR(USART_RXC_vect)
 		sendToUc(true);
 	}
 
-	void sendData(uint16_t data, bool endline)
+	void sendData(uint16_t data, uint8_t endline)
 	{
 		while(usart_buffer_ind);
-//		uint8_t i;
-//		for(i=0; i<xSize; i++)
-//		{
-//			while(usart_buffer_ind);
-//			sprintf(usart_buffer, "%d", data[i]);
-//		}
 		sprintf(usart_buffer, "%d", data);
+		sendToUc(false);
 		while(usart_buffer_ind);
-		if (endline)
+		if (endline & 1) //if it's 2, then not. but if it's 3 it's ok
 		strncpy(usart_buffer, ";", uartBufferSize);
 		else
 		strncpy(usart_buffer, " ", uartBufferSize);
-		sendToUc(true); //with end line
+
+		sendToUc(endline); //with end line
 	}
 
 	void sendToUc(bool newLine)
@@ -134,7 +130,7 @@ ISR(USART_RXC_vect)
 				}
 				else
 				{
-					usart_buffer[z]   = 32;  //SPACE
+					//usart_buffer[z]   = 32;  //SPACE
 					usart_buffer[z+1]  = 0;  //string end
 				}
 				break;

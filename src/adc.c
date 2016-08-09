@@ -1,7 +1,7 @@
 /* adc.c
  *
  *  Created on: 14 cze 2016
- *      Author: nkubiak
+ *
 */
 
 #include "includes.h"
