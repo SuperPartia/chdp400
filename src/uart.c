@@ -111,7 +111,7 @@ ISR(USART_RXC_vect)
 		else
 		strncpy(usart_buffer, " ", uartBufferSize);
 
-		sendToUc(endline); //with end line
+		sendToUc(endline & 1); //with end line
 	}
 
 	void sendToUc(bool newLine)

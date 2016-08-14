@@ -116,7 +116,7 @@ void startTimer1(int measurementT, int cooldownT)
 	T /= 4194.5;
 	coolOCR1A = T * 0xFFFF;
 
-	OCR1A = floor(measOCR1A); //15624 for 1s
+	OCR1A = floor(coolOCR1A); //15624 for 1s
 	TCCR1B |= 3;
 }
 
