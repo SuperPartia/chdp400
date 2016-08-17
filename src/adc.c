@@ -1,7 +1,7 @@
 /* adc.c
  *
  *  Created on: 14 cze 2016
- *      Author: nkubiak
+ *
 */
 
 #include "includes.h"
@@ -13,7 +13,6 @@ void adcInit()
 }
 
 unsigned int adcRead(_Bool channel)
-
 {
 	PORTC = channel<<analog_switch;
 	ADCSRA |= (1<<ADSC);
@@ -25,9 +24,6 @@ unsigned int adcRead(_Bool channel)
 //{
 //	ADCSRA &= ~(1<<ADIE);
 //	ADCSRA &= ~(1<<ADSC);
-//char* data = 0;
-//sprintf(data, "%d", ADC);
-////ucToPcSend("kurwa");
 //}
 
 

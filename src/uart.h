@@ -2,7 +2,7 @@
  * uart.h
  *
  *  Created on: 14 cze 2016
- *      Author: nkubiak
+ *
  */
 #define uartBufferSize 30
 #define tx_flag UCSRB & (1<<UDRIE)
@@ -11,9 +11,14 @@
 #define UART_H_
 
 void usartInit(void);
-void ucToPcSend(char* data);
 void uartStart(void);
+void sendToUc(bool newLine);
+void sendData(uint16_t data, uint8_t endline);
+void displayString(char* data);
+void displayInt(int value);
+uint32_t wait4input(char* prompt);
 
 
+//m
 
 #endif /* UART_H_ */

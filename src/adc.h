@@ -2,7 +2,7 @@
  * adc.h
  *
  *  Created on: 14 cze 2016
- *      Author: nkubiak
+ *
  */
 
 #define analog_switch 1
