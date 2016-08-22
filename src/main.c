@@ -6,31 +6,29 @@ volatile bool repeatHappened = false;
 
 
 int main(void) {
-	uint16_t samplingT = 0;
-	int measurementTime = 0;
-	int cooldownTime = 0;
-	uint8_t repeats = 0;
-	uint8_t mode = 0;
-
-	bool currentReciever;
-	uint8_t diode = 2;
-
-	uint8_t changeState = 0; //1 last diode, 2 changeRecievers, 3 both
 	initAll();
 
-//	displayInt(twiGetData(0x1A));
-//	twiSendData(8, 0x1A);
-//	displayInt(twiGetData(0x1A));
-	twiSendData(5, 0x16);
-
+	bool accRange[] = {1, 0};
+	bool accMode[] = {1, 0};
+	uint8_t x, y, z;
+	uint8_t old_x, old_y, old_z;
+	uint8_t treshold = 8;
+	setMeasuringMode(accRange, accMode);
 	while (1) {
-		displayString("X: ");
-		displayInt(twiGetData(0x06));
-		displayString("Y: ");
-		displayInt(twiGetData(0x07));
-		displayString("Z: ");
-		displayInt(twiGetData(0x08));
-		_delay_ms(1000);
+		old_x = x;
+		old_y = y;
+		old_z = z;
+		readXYZ(&x, &y, &z);
+		if ((abs(x-old_x)<=treshold) & (abs(y-old_y)<=treshold) & (abs(z-old_z)<=treshold))
+		{
+			PORTD|= (1<<ind);
+		}
+		else
+		{
+			PORTD&= ~(1<<ind);
+		}
+		_delay_ms(500);
+
 	}
 
 }

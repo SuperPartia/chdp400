@@ -43,15 +43,9 @@ uint8_t twiRead(uint8_t ack)
 
 void twiSendData(uint8_t data, uint8_t regAddress)
 {
-	//unsigned int length = strlen(data);
-
 	twiStart();
 	twiWrite(writeAddr); //send device adress
 	twiWrite(regAddress); //send register address
-
-	//unsigned char z;
-	//for(z=0; z<length; z++)
-	//{
 	twiWrite(data);
 	twiStop();
 }
@@ -59,107 +53,39 @@ void twiSendData(uint8_t data, uint8_t regAddress)
 uint8_t twiGetData(uint8_t regAddress)
 {
 	twiStart();
-//	displayString("1. status po start:");
-//	displayInt((TWSR & 0xF8));
-
 	twiWrite(writeAddr); //send device addres for writing
-//	displayString("2. status po writeAddr:");
-//	displayInt((TWSR & 0xF8));
-
 	twiWrite(regAddress); //send register address
-
-//	displayString("3. status po regAddr:");
-//	displayInt((TWSR & 0xF8));
 	twiStart();
 	twiWrite(readAddr); //send device address for reading
-
-//	displayString("4. status po readAddr:");
-//	displayInt((TWSR & 0xF8));
-
-
-//	displayString("udalo sie kurwa!");
-//	displayString("wartosc:");
 	return twiRead(0);
 
 }
 
-
-uint8_t test()
+void setMeasuringMode(bool range[2], bool mode[2])
 {
-	int i = 0;
+/*
+	range [1:0] g-Range Sensitivity
+		00 		8g 		16 LSB/g
+		01 		2g 		64 LSB/g
+		10 		4g 		32 LSB/g
+*/
 
-	displayString("try adresy z zakresu 0-FF:");
-	displayString(".");
-	_delay_ms(2000);
-	int propperAddr = -1;
+/*
+	MODE [1:0] 	Function
+		00 		Standby Mode
+		01 		Measurement Mode
+		10 		Level Detection Mode
+		11 		Pulse Detection Mode
+*/
+uint8_t reg16 = 0;
+reg16 = (range[1] << 3) | (range[0] << 2) | mode[1] << 1 | mode[0];
+twiSendData(reg16, 0x16);
 
-	for(i=0; i<=0xFF; i++)
-	{
+}
 
-		twiStart();
-		twiWrite(writeAddr); //send device adress
-
-		//displayString(".");
-		if ((TWSR & 0xF8) == 0x18 || (TWSR & 0xF8) == 0x20 || (TWSR & 0xF8) == 0x38)
-		{
-			displayString("pieknie kurwa!");
-			displayString("udalo sie na adresie:");
-			displayInt(i);
-			propperAddr = i;
-
-			displayString("status:");
-			displayInt((TWSR & 0xF8));
-			displayString("to oznacza:");
-			switch ((TWSR & 0xF8))
-			{
-			case 0x18 : { displayString("adres wyszedl,"); displayString("jest ack,"); }
-			case 0x20 : { displayString("adres wyszedl,"); displayString("nie ma ack,"); }
-			case 0x38 : { displayString("adres wyszed,"); displayString("ale cos sie zjebalo,"); }
-			default: { displayString("sprawdz w doku"); }
-			}
-			twiStop();
-			break;
-		}
-
-		twiStop();
-	}
-
-	if (propperAddr == -1)
-	{
-		displayString("kupa :(");
-		displayString("ale dla pewnosci,");
-		displayString("read na 0x1D");
-		int a = twiGetData(0x1D);
-		displayInt(a);
-
-
-	}
-	else
-	{
-		displayString("no to tera, operacja read");
-		displayString("4 kroki i wartosc ");
-
-		twiStart();
-		displayString("1. status po start:");
-		displayInt((TWSR & 0xF8));
-
-		twiWrite(propperAddr); //send device addres for writing
-		displayString("2. status po writeAddr:");
-		displayInt((TWSR & 0xF8));
-
-		twiWrite(0x0D); //send register address (np ten rejestr)
-
-		displayString("3. status po regAddr:");
-		displayInt((TWSR & 0xF8));
-
-		twiWrite(propperAddr ^ 1); //send device address for reading
-
-		displayString("4. status po readAddr:");
-		displayInt((TWSR & 0xF8));
-
-
-		displayString("wartosc rejestru:");
-		displayInt(twiRead(1));
-
-	}
+void readXYZ(uint8_t *x, uint8_t *y, uint8_t *z)
+{
+	*x = twiGetData(0x06);
+	*y = twiGetData(0x07);
+	*z = twiGetData(0x08);
 }
