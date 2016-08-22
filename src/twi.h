@@ -25,6 +25,5 @@ uint8_t twiRead(uint8_t ack);
 void twiSendData(uint8_t data, uint8_t regAddress);
 
 uint8_t twiGetData(uint8_t regAddress);
-uint8_t test();
 
 #endif /* TWI_H_ */
