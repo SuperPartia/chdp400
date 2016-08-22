@@ -10,22 +10,16 @@ int main(void) {
 
 	bool accRange[] = {1, 0};
 	bool accMode[] = {1, 0};
-	uint8_t x, y, z;
-	uint8_t old_x, old_y, old_z;
-	uint8_t treshold = 8;
+	uint8_t threshold = 8;
 	setMeasuringMode(accRange, accMode);
 	while (1) {
-		old_x = x;
-		old_y = y;
-		old_z = z;
-		readXYZ(&x, &y, &z);
-		if ((abs(x-old_x)<=treshold) & (abs(y-old_y)<=treshold) & (abs(z-old_z)<=treshold))
+		if (detectMove(threshold))
 		{
-			PORTD|= (1<<ind);
+			PORTD|= (1<<ind); //start measuring
 		}
 		else
 		{
-			PORTD&= ~(1<<ind);
+			PORTD&= ~(1<<ind); //do nothing, wait for no movement
 		}
 		_delay_ms(500);
 

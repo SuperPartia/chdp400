@@ -28,5 +28,6 @@ uint8_t twiGetData(uint8_t regAddress);
 
 void setMeasuringMode(bool range[2], bool mode[2]);
 void readXYZ(uint8_t *x, uint8_t *y, uint8_t *z);
+bool detectMove(uint8_t threshold);
 
 #endif /* TWI_H_ */
