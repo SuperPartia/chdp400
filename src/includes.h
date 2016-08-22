@@ -4,15 +4,13 @@
 #include <util/delay.h>
 #include <stdint.h>
 #include <math.h>
+#include <stdbool.h>
 
 //defines
 #define red 7
 #define green 6
 #define ir 5
 #define ind 4
-
-//enums
-typedef enum {false, true } bool;
 
 #include "adc.h"
 #include "uart.h"
