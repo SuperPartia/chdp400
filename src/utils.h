@@ -10,11 +10,13 @@
 #define UTILS_H_
 
 void initAll();
+uint8_t initialdiode (uint8_t mode)
+
 void runConfig(uint16_t *samplingT, int *measurementTime, int *cooldownTime,
 		uint8_t *mode, uint8_t *repeats);
 
-uint8_t switchReciever (uint8_t recieverCount);
-bool doTheSwitching(uint8_t *diode, bool *reciever, mode);
+bool switchReciever (uint8_t recieverCount);
+uint8_t doTheSwitching(uint8_t *diode, bool *reciever, mode);
 
 
 
