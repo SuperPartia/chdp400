@@ -18,6 +18,7 @@ typedef enum {false, true } bool;
 #include "uart.h"
 #include "twi.h"
 #include "timers.h"
+#include "utils.h"
 
 //globals
 volatile extern uint8_t _readingUart;
