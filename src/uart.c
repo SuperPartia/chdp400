@@ -19,8 +19,8 @@ void usartInit(void)
 
 	usart_buffer = (char*)malloc(uartBufferSize);
 	UCSRC = (1<<URSEL) | (1<<UCSZ1) | (1<<UCSZ0);  //bitów danych: 8
-	//bity stopu:  1
-	//parzystość:  brak
+												//bity stopu:  1
+												//parzystość:  brak
 	UCSRB = (1<<TXEN) | (1<<RXEN) | (1<<RXCIE);
 }
 
@@ -80,18 +80,9 @@ ISR(USART_RXC_vect)
 
 	void displayInt(int value)
 	{
-		//char* data = (char*) malloc(30);
-
-		//displayString("dec");
 		while(usart_buffer_ind);
 		sprintf(usart_buffer, "%d", value);
 		sendToUc(true);
-
-		//displayString("hex");
-		//value = (value/16)*10 + value-(value/16)*16;
-		//sprintf(data, "%d", value);
-		//displayString(data);
-
 	}
 	void displayString(char* data)
 	{

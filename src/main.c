@@ -10,15 +10,15 @@ int main(void) {
 
 	uint16_t samplingT = 0;
 	int measurementTime = 0;
-	//uint8_t repeats = 0;
 	uint8_t mode = 0;
-	//chagne state is the supportive value, that allows deciding what is the next step
-	//0 - normal. Switch diode,
-	//1 - send endline to data
-	//2 - switch receivers,
-	//3 - switch receivers end send endline
+
+	bool accRange[] = {1, 0};
+	bool accMode[] = {1, 0};
+	uint8_t threshold = 8;
 
 	initAll();
+
+	setMeasuringMode(accRange, accMode);
 
 	// this loop allows the uC to work continously, even after finishing the measurement, it will act like restarted
 	while (1) {
@@ -26,10 +26,12 @@ int main(void) {
 		runConfig(&samplingT, &measurementTime, &mode);
 		//***************************//
 
-
+		while(detectMove(threshold))
+		{
 		displayString("data = ["); //starting data string for further processing
-
+		measure_loop(&samplingT, &measurementTime, &mode);
 		displayString("];");
+		}
 	}
 
 }
