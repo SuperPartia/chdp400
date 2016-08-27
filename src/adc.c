@@ -12,7 +12,7 @@ void adcInit()
 	DDRC = 1 << analog_switch;
 }
 
-unsigned int adcRead(_Bool channel)
+unsigned int adcRead(bool channel)
 {
 	PORTC = channel<<analog_switch;
 	ADCSRA |= (1<<ADSC);

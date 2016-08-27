@@ -4,6 +4,7 @@
 #include <util/delay.h>
 #include <stdint.h>
 #include <math.h>
+#include <stdbool.h>
 
 //defines
 #define red 7
@@ -11,20 +12,17 @@
 #define ir 5
 #define ind 4
 
-//enums
-typedef enum {false, true } bool;
 
 #include "adc.h"
 #include "uart.h"
 #include "twi.h"
 #include "timers.h"
 #include "utils.h"
+#include "measure.h"
 
 //globals
 volatile extern uint8_t _readingUart;
 volatile uint32_t uartVal;
-volatile extern bool _samplingReady;
-volatile extern bool _setup;
 volatile extern bool _working;
 volatile extern uint8_t repeatsCount;
 volatile extern bool repeatHappened;

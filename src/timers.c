@@ -7,11 +7,6 @@
 
 #include "includes.h"
 
-
-volatile bool _samplingReady = false;
-volatile bool _setup = false;
-volatile bool _working = true;
-
 /*
 0 0 0 No clock source. (Timer/Counter stopped)
 0 0 1 clk /1 (No prescaling)
@@ -73,9 +68,9 @@ ISR (TIMER0_OVF_vect)  // timer0 overflow interrupt
 		subCounter = 0;
 //		if (_working == true)
 //		{
-			if (_samplingReady == false && _setup == false)
+			if (samplingReady == false)
 			{
-				_samplingReady = true;
+				samplingReady = true;
 			}
 			else
 			{
@@ -97,7 +92,7 @@ void initTimer1()
 	//Set interrupt on compare match
 }
 
-void startTimer1(int measurementT, int cooldownT)
+void startTimer1(int measurementT)
 {
 	float T = measurementT;
 	while (floor(T) >= 4194)
@@ -106,17 +101,7 @@ void startTimer1(int measurementT, int cooldownT)
 		measureCycles *= 2;
 	}
 	T /= 4194.5;
-	measOCR1A = T*0xFFFF;
-	T = cooldownT;
-	while (floor(T) >= 4194)
-	{
-		T /= 2;
-		cooldownCycles *= 2;
-	}
-	T /= 4194.5;
-	coolOCR1A = T * 0xFFFF;
-
-	OCR1A = floor(coolOCR1A); //15624 for 1s
+	OCR1A = floor(T*0xFFFF);
 	TCCR1B |= 3;
 }
 
@@ -129,21 +114,7 @@ uint16_t stopTimer1()
 
 ISR (TIMER1_COMPA_vect)
 {
-	static uint8_t subCounter1 = 1;
-	if((_working && (subCounter1 == measureCycles)) || (!_working && (subCounter1 == cooldownCycles)))
-	{
-
-		subCounter1 = 1;
-		if (_working)
-		{
-		repeatHappened = true;
-		repeatsCount++;
-		}
-		_working ^= 1;
-		OCR1A = _working ? measOCR1A : coolOCR1A;
-		return;
-	}
-	subCounter1 ++;
+measureFlag = false;
 }
 
 
