@@ -12,7 +12,6 @@
 #define ir 5
 #define ind 4
 
-
 #include "adc.h"
 #include "uart.h"
 #include "twi.h"
