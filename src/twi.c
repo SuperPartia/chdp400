@@ -106,6 +106,7 @@ bool detectMove(uint8_t threshold)
 	else
 	{
 		PORTD |= (1<<ind);
+		PORTD &= ~(1<<red) & ~(1<<green) & ~(1<<ir);
 		_delay_ms(1000);
 		return false;
 	}
