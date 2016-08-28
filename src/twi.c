@@ -100,10 +100,13 @@ bool detectMove(uint8_t threshold)
 	readXYZ(&x, &y, &z);
 	if ((abs(x-old_x)<=threshold) & (abs(y-old_y)<=threshold) & (abs(z-old_z)<=threshold))
 	{
+		PORTD &= ~(1<<ind);
 		return true;
 	}
 	else
 	{
+		PORTD |= (1<<ind);
+		_delay_ms(1000);
 		return false;
 	}
 }

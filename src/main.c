@@ -21,10 +21,8 @@ int main(void) {
 	setMeasuringMode(accRange, accMode);
 
 	// this loop allows the uC to work continously, even after finishing the measurement, it will act like restarted
+	runConfig(&samplingT, &measurementTime, &mode);
 	while (1) {
-		//user config getter method
-		runConfig(&samplingT, &measurementTime, &mode);
-		//***************************//
 
 		while(detectMove(threshold))
 		{

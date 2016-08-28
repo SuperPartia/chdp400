@@ -91,18 +91,18 @@ ISR(USART_RXC_vect)
 		sendToUc(true);
 	}
 
-	void sendData(uint16_t data, uint8_t endline)
+	void sendData(uint16_t data, bool endline)
 	{
 		while(usart_buffer_ind);
 		sprintf(usart_buffer, "%d", data);
 		sendToUc(false);
 		while(usart_buffer_ind);
-		if (endline & 1) //if it's 2, then not. but if it's 3 it's ok
+		if (endline) //if it's 2, then not. but if it's 3 it's ok
 		strncpy(usart_buffer, ";", uartBufferSize);
 		else
 		strncpy(usart_buffer, " ", uartBufferSize);
 
-		sendToUc(endline & 1); //with end line
+		sendToUc(endline); //with end line
 	}
 
 	void sendToUc(bool newLine)

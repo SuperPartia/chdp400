@@ -14,6 +14,7 @@ uint16_t do_measure(bool receiver, uint16_t *samplingT)
 	while(!(samplingReady));
 	stopTimer0();
 	samplingReady = false;
+	sendData(value, true);
 	return value;
 }
 
@@ -38,12 +39,14 @@ void measure_loop(uint16_t *samplingT, int *measurementTime,
 			for (uint8_t diode = ir; diode <= red; diode++) {
 				if(!(*mode & (1<<(diode-ir)))) continue;
 
+				sendData(diode-ir, false);
 				PORTD |= (1<<diode);
 
+				sendData(channelSwitch, false);
+				value = do_measure(channelSwitch, samplingT);
+
 				if(recieverMode)
-					value = do_measure(((diode-ir)%2), samplingT);
-				else
-					value = do_measure(channelSwitch, samplingT);
+					channelSwitch = ! channelSwitch;
 
 				PORTD &= (1<<diode);
 			}
@@ -56,14 +59,16 @@ void measure_loop(uint16_t *samplingT, int *measurementTime,
 		{
 			for (uint8_t diode = ir; diode <= red; diode++) {
 				if(!(*mode & (1<<(diode-ir)))) continue;
-				for (uint8_t i = 0; i <= diodesAmount; i++) { // tu różnica z poprzednim
+				for (uint8_t i = 0; i < diodesAmount; i++) { // tu różnica z poprzednim
 
+					sendData(diode-ir, false);
 					PORTD |= (1<<diode);
 
+					sendData(channelSwitch, false);
+					value = do_measure(channelSwitch, samplingT);
+
 					if(recieverMode)
-						value = do_measure(((diode-ir)%2), samplingT);
-					else
-						value = do_measure(channelSwitch, samplingT);
+						channelSwitch = ! channelSwitch;
 
 					PORTD &= (1<<diode);
 				}
