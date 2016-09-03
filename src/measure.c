@@ -23,12 +23,15 @@ void measure_loop(uint16_t *samplingT, int *measurementTime,
 {
 	bool recieverMode = *mode & (1<<6);
 	bool diodeMode = *mode & (1<<3);
-	bool channelSwitch = false;
+	bool channelSwitch = !(*mode & (1<<4));
 	uint8_t diodesAmount = 0;
+	uint8_t transistorsAmount = 0;
 	uint16_t value;
 
 	for (uint8_t diode = 0; diode < 3; diode++) if (*mode & (1<<diode)) diodesAmount++;
+	transistorsAmount = (*mode & (1<<4)) && (*mode & (1<<5));
 	if(!diodesAmount) return;
+	if(!(*mode & (1<<4)) && !(*mode & (1<<5))) return; // no transistors
 	startTimer1(*measurementTime);
 	measureFlag = true;
 
@@ -45,12 +48,12 @@ void measure_loop(uint16_t *samplingT, int *measurementTime,
 				sendData(channelSwitch, false);
 				value = do_measure(channelSwitch, samplingT);
 
-				if(recieverMode)
+				if(recieverMode && transistorsAmount)
 					channelSwitch = ! channelSwitch;
 
 				PORTD &= (1<<diode);
 			}
-			if (!recieverMode) channelSwitch = !channelSwitch;
+			if (!recieverMode && transistorsAmount) channelSwitch = !channelSwitch;
 		}
 
 
@@ -67,12 +70,12 @@ void measure_loop(uint16_t *samplingT, int *measurementTime,
 					sendData(channelSwitch, false);
 					value = do_measure(channelSwitch, samplingT);
 
-					if(recieverMode)
+					if(recieverMode && transistorsAmount)
 						channelSwitch = ! channelSwitch;
 
 					PORTD &= (1<<diode);
 				}
-				if (!recieverMode) channelSwitch = !channelSwitch;
+				if (!recieverMode && transistorsAmount) channelSwitch = !channelSwitch;
 			}
 		}
 	}

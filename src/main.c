@@ -22,13 +22,14 @@ int main(void) {
 
 	// this loop allows the uC to work continously, even after finishing the measurement, it will act like restarted
 	runConfig(&samplingT, &measurementTime, &mode);
+	displayString("data = [");
 	while (1) {
 
 		while(detectMove(threshold))
 		{
-		displayString("data = ["); //starting data string for further processing
+		 //starting data string for further processing
 		measure_loop(&samplingT, &measurementTime, &mode);
-		displayString("];");
+
 		}
 	}
 
