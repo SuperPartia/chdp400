@@ -10,9 +10,7 @@ uint16_t do_measure(bool receiver, uint16_t *samplingT)
 {
 	uint16_t value;
 	value = adcRead(receiver);
-	startTimer0(*samplingT);
 	while(!(samplingReady));
-	stopTimer0();
 	samplingReady = false;
 	sendData(value, true);
 	return value;

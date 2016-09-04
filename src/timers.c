@@ -35,7 +35,6 @@ void startTimer0(uint16_t samplingT)
 {
 	//t = 1/frequ 100 us 500m
 	//t = TCNT0*presc / 1 000 000  0,065536
-
 	float t = samplingT;
 	while (floor(t) >= 262)
 	{
@@ -74,7 +73,7 @@ ISR (TIMER0_OVF_vect)  // timer0 overflow interrupt
 			}
 			else
 			{
-				displayString("error!");
+		//		displayString("error!");
 			}
 //		}
 		return;

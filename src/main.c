@@ -22,6 +22,7 @@ int main(void) {
 
 	// this loop allows the uC to work continously, even after finishing the measurement, it will act like restarted
 	runConfig(&samplingT, &measurementTime, &mode);
+	startTimer0(samplingT);
 	displayString("data = [");
 	while (1) {
 
