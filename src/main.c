@@ -1,48 +1,37 @@
-
 #include "includes.h"
 #define F_CPU 1000000
-
-volatile uint8_t _readingUart = false;
-volatile uint16_t freq = 0;
-volatile uint16_t count = 0;
-volatile uint8_t mode = 0;
+volatile uint8_t repeatsCount;
+volatile bool repeatHappened = false;
 
 
-int main(void)
-{
+
+int main(void) {
+	//config data **************//
+
+	uint16_t samplingT = 0;
+	int measurementTime = 0;
+	uint8_t mode = 0;
+
+	bool accRange[] = {1, 0};
+	bool accMode[] = {1, 0};
+	uint8_t threshold = 8;
 
 	initAll();
-	runConfig();
 
-	while(1){
+	setMeasuringMode(accRange, accMode);
+
+	// this loop allows the uC to work continously, even after finishing the measurement, it will act like restarted
+	runConfig(&samplingT, &measurementTime, &mode);
+	startTimer0(samplingT);
+	displayString("data = [");
+	while (1) {
+
+		while(detectMove(threshold))
+		{
+		 //starting data string for further processing
+		measure_loop(&samplingT, &measurementTime, &mode);
+
+		}
 	}
-}
-
-
-void initAll()
-{
-
-	MCUCSR|= (1<<7);
-	MCUCSR|= (1<<7);
-	sei();
-
-	uartStart();
-	adcInit();
-	//DDR na diodki, nie pamiętam na jakim porcie
-}
-
-void runConfig()
-{
-
-	freq = wait4input("sample frequency (in kHz):");
-	count = wait4input("sample count (in k):");
-	mode = wait4input("mode:");
-
-	displayString("freq =");
-	displayInt(freq);
-	displayString("count =");
-	displayInt(count);
-	displayString("mode =");
-	displayInt(mode);
 
 }

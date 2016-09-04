@@ -7,8 +7,8 @@
 #define ACK 1
 #define NOACK 0
 
-#define writeAddr 0x1D
-#define readAddr 0x9D
+#define writeAddr 0x3A
+#define readAddr 0x3B
 
 #ifndef TWI_H_
 #define TWI_H_
@@ -18,12 +18,16 @@ void twiStart(void);
 
 void twiStop(void);
 
-void twiWrite(char data);
+void twiWrite(uint8_t data);
 
-char twiRead(char ack);
+uint8_t twiRead(uint8_t ack);
 
-void twiSendData(char data, char regAddress);
+void twiSendData(uint8_t data, uint8_t regAddress);
 
-char twiGetData(char regAddress);
+uint8_t twiGetData(uint8_t regAddress);
+
+void setMeasuringMode(bool range[2], bool mode[2]);
+void readXYZ(uint8_t *x, uint8_t *y, uint8_t *z);
+bool detectMove(uint8_t threshold);
 
 #endif /* TWI_H_ */

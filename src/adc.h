@@ -2,7 +2,7 @@
  * adc.h
  *
  *  Created on: 14 cze 2016
- *      Author: nkubiak
+ *
  */
 
 #define analog_switch 1
@@ -11,7 +11,7 @@
 #define ADC_H_
 
 void adcInit();
-unsigned int adcRead(_Bool channel);
+unsigned int adcRead(bool channel);
 
 
 #endif /* ADC_H_ */
