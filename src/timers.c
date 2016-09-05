@@ -45,7 +45,7 @@ void startTimer0(uint16_t samplingT)
 	//resid - t
 	//256   - 262.1
 	TCNT0 = 0xFF - sampleResid;
-	TCCR0 |= 5; //0,262144
+	TCCR0 |= 5; //0,262144 TODO
 
 }
 
@@ -73,7 +73,7 @@ ISR (TIMER0_OVF_vect)  // timer0 overflow interrupt
 			}
 			else
 			{
-		//		displayString("error!");
+				displayString("error!");
 			}
 //		}
 		return;
@@ -113,7 +113,7 @@ uint16_t stopTimer1()
 
 ISR (TIMER1_COMPA_vect)
 {
-measureFlag = false;
+	measureFlag = false;
 }
 
 
