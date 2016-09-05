@@ -25,13 +25,8 @@ int main(void) {
 	startTimer0(samplingT);
 	displayString("data = [");
 	while (1) {
-
-		while(detectMove(threshold))
-		{
-		 //starting data string for further processing
-		measure_loop(&samplingT, &measurementTime, &mode);
-
-		}
+		//starting data string for further processing
+		measure_loop(&samplingT, &measurementTime, &mode, &threshold);
 	}
 
 }
