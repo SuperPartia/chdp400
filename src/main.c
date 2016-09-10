@@ -19,7 +19,7 @@ int main(void) {
 
 	initAll();
 
-	setMeasuringMode(accRange, accMode);
+	setAccelerometerMode(accRange, accMode);
 
 	// this loop allows the uC to work continously, even after finishing the measurement, it will act like restarted
 	runConfig(&samplingT, &measurementTime, &repeats, &mode);

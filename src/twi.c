@@ -61,7 +61,7 @@ uint8_t twiGetData(uint8_t regAddress)
 
 }
 
-void setMeasuringMode(bool range[2], bool mode[2]) //TODO rename
+void setAccelerometerMode(bool range[2], bool mode[2]) //TODO rename
 {
 	/*
 	range [1:0] g-Range Sensitivity

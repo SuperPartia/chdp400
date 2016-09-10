@@ -26,7 +26,7 @@ void twiSendData(uint8_t data, uint8_t regAddress);
 
 uint8_t twiGetData(uint8_t regAddress);
 
-void setMeasuringMode(bool range[2], bool mode[2]);
+void setAccelerometerMode(bool range[2], bool mode[2]);
 void readXYZ(uint8_t *x, uint8_t *y, uint8_t *z);
 bool detectMove(uint8_t threshold);
 
