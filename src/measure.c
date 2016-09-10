@@ -8,6 +8,10 @@
 
 uint16_t do_measure(bool receiver, uint16_t *samplingT, bool *DetectMove)
 {
+
+	while(!(samplingReady));
+	samplingReady = false;
+
 	uint16_t value;
 	value = adcRead(receiver);
 
@@ -15,9 +19,6 @@ uint16_t do_measure(bool receiver, uint16_t *samplingT, bool *DetectMove)
 		sendData(value, true);
 	else
 		sendData(0, true);
-
-	while(!(samplingReady));
-	samplingReady = false;
 
 	return value;
 }
@@ -27,7 +28,16 @@ void measure_loop(uint16_t *samplingT, int *measurementTime,
 {
 	bool recieverMode = *mode & (1<<6);
 	bool diodeMode = *mode & (1<<3);
-	bool channelSwitch = !(*mode & (1<<4)); //TODO rename
+	bool channelSwitch;// 0 red receiver
+	if(*mode & (1<<4))
+	{
+		channelSwitch = (*mode & (1<<0)) && (*mode & (1<<5));
+	}
+	else //czerwony nie zezwolony
+	{
+		channelSwitch = 1;
+	}
+
 	uint8_t diodesAmount = 0;
 	uint8_t transistorsAmount = 0;
 
@@ -39,9 +49,9 @@ void measure_loop(uint16_t *samplingT, int *measurementTime,
 	//TODO move above to init measurement
 	measureFlag = true;
 
-	bool DetectMove = detectMove(*threshold);
+	bool DetectMove = true;//detectMove(*threshold); ################## FIX
 
-	while(measureFlag){
+	while(true ){ //measureFlag
 
 		if(diodeMode)
 		{
