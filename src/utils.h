@@ -14,7 +14,7 @@
 
 void initAll();
 void runConfig(uint16_t *samplingT, int *measurementTime,
-		uint8_t *mode);
+		uint16_t *repeats, uint8_t *mode);
 
 
 #endif /* UTILS_H_ */

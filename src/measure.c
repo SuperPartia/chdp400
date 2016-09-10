@@ -9,8 +9,9 @@
 uint16_t do_measure(bool receiver, uint16_t *samplingT, bool *DetectMove)
 {
 
-	while(!(samplingReady));
-	samplingReady = false;
+	blockFlag = false;
+	while(!(samplingFlag));
+	samplingFlag = false;
 
 	uint16_t value;
 	value = adcRead(receiver);
@@ -20,12 +21,13 @@ uint16_t do_measure(bool receiver, uint16_t *samplingT, bool *DetectMove)
 	else
 		sendData(0, true);
 
+	blockFlag = true;
 	return value;
 }
 
-void measure_loop(uint16_t *samplingT, int *measurementTime,
-		uint8_t *mode, uint8_t *threshold)
+void measure_loop(uint16_t *samplingT, uint16_t *repeats, uint8_t *mode, uint8_t *threshold)
 {
+	uint16_t repeatsCounter = 0;
 	bool recieverMode = *mode & (1<<6);
 	bool diodeMode = *mode & (1<<3);
 	bool channelSwitch;// 0 red receiver
@@ -45,25 +47,21 @@ void measure_loop(uint16_t *samplingT, int *measurementTime,
 		if (*mode & (1<<diode)) diodesAmount++;
 
 	transistorsAmount = (*mode & (1<<4)) && (*mode & (1<<5));
-	startTimer1(*measurementTime);
 	//TODO move above to init measurement
-	measureFlag = true;
 
 	bool DetectMove = true;//detectMove(*threshold); ################## FIX
 
-	while(true ){ //measureFlag
+	do { //measureFlag
 
 		if(diodeMode)
 		{
 			for (uint8_t diode = ir; diode <= red; diode++) {
 				if(!(*mode & (1<<(diode-ir)))) continue;
-
 				sendData(diode-ir, false);
 				PORTD |= (1<<diode);
 
 				sendData(channelSwitch, false);
 				do_measure(channelSwitch, samplingT, &DetectMove);
-
 				if(recieverMode && transistorsAmount)
 					channelSwitch = ! channelSwitch;
 
@@ -78,7 +76,8 @@ void measure_loop(uint16_t *samplingT, int *measurementTime,
 		{
 			for (uint8_t diode = ir; diode <= red; diode++) {
 				if(!(*mode & (1<<(diode-ir)))) continue;
-				for (uint8_t i = 0; i < diodesAmount; i++) { // tu różnica z poprzednim
+				measureFlag = true;
+				while (measureFlag) { // tu różnica z poprzednim
 
 					sendData(diode-ir, false);
 					PORTD |= (1<<diode);
@@ -94,6 +93,7 @@ void measure_loop(uint16_t *samplingT, int *measurementTime,
 				if (!recieverMode && transistorsAmount) channelSwitch = !channelSwitch;
 			}
 		}
-	}
-	stopTimer1();
+		repeatsCounter++;
+	} while(repeatsCounter != *repeats);
+	//stopTimer1();
 }

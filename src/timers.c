@@ -65,17 +65,19 @@ ISR (TIMER0_OVF_vect)  // timer0 overflow interrupt
 	{
 		TCNT0 = 0xFF - sampleResid;
 		subCounter = 0;
-//		if (_working == true)
-//		{
-			if (samplingReady == false)
+
+			if (samplingFlag == false)
 			{
-				samplingReady = true;
+				if(blockFlag)
+				{
+					displayString("error! Block flag is true!");
+				}
+				samplingFlag = true;
 			}
 			else
 			{
 				displayString("error!");
 			}
-//		}
 		return;
 	}
 	subCounter ++;
