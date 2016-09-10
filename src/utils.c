@@ -26,7 +26,7 @@ void initAll() {
 void runConfig(uint16_t *samplingT, int *measurementTime,
 		uint8_t *mode) {
 
-	PORTD = (1 << ind);
+
 	*samplingT = wait4input("sampling period (in ms): ");
 
 	//admin mode test, will be removed later
