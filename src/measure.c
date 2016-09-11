@@ -58,10 +58,11 @@ void measure_loop(uint16_t *samplingT, uint16_t *repeats, uint8_t *mode, uint8_t
 			measureFlag = true;
 			do { // tu różnica z poprzednim
 
-				sendData(diode-ir, false);
 				PORTD |= (1<<diode);
 
+				sendData(diode-ir, false);
 				sendData(receiver, false);
+
 				do_measure(receiver, samplingT, &DetectMove);
 
 				if(recieverMode && transistorsAmount)
