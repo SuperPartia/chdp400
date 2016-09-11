@@ -13,7 +13,7 @@
 void usartInit(void);
 void uartStart(void);
 void sendToUc(bool newLine);
-void sendData(uint16_t data, uint8_t endline);
+void sendData(uint16_t data, bool endline);
 void displayString(char* data);
 void displayInt(int value);
 uint32_t wait4input(char* prompt);

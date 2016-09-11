@@ -33,3 +33,6 @@
 *.su
 /.cproject
 /.project
+/Debug
+/Release
+/.settings

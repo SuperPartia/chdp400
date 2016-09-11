@@ -9,13 +9,12 @@
 #ifndef UTILS_H_
 #define UTILS_H_
 
+#define endLine 1
+#define switchRec 2
+
 void initAll();
-void runConfig(uint16_t *samplingT, int *measurementTime, int *cooldownTime,
-		uint8_t *mode, uint8_t *repeats);
-
-uint8_t switchReciever (uint8_t recieverCount);
-bool doTheSwitching(uint8_t *diode, bool *reciever, mode);
-
+void runConfig(uint16_t *samplingT, int *measurementTime,
+		uint16_t *repeats, uint8_t *mode);
 
 
 #endif /* UTILS_H_ */

@@ -9,10 +9,10 @@ void adcInit()
 {
 	ADMUX = 0 | (1<<REFS0); //channel 0, Vref = Vcc
 	ADCSRA = (1<<ADEN); //| (1<<ADIE);
-	DDRC = 1 << analog_switch;
+	DDRC |= 1 << analog_switch;
 }
 
-unsigned int adcRead(_Bool channel)
+unsigned int adcRead(bool channel)
 {
 	PORTC = channel<<analog_switch;
 	ADCSRA |= (1<<ADSC);

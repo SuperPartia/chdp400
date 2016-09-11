@@ -61,7 +61,7 @@ uint8_t twiGetData(uint8_t regAddress)
 
 }
 
-void setMeasuringMode(bool range[2], bool mode[2])
+void setAccelerometerMode(bool range[2], bool mode[2]) //TODO rename
 {
 	/*
 	range [1:0] g-Range Sensitivity
@@ -98,12 +98,15 @@ bool detectMove(uint8_t threshold)
 	old_y = y;
 	old_z = z;
 	readXYZ(&x, &y, &z);
-	if ((abs(x-old_x)<=threshold) & (abs(y-old_y)<=threshold) & (abs(z-old_z)<=threshold))
+	if ((abs(x-old_x)<=threshold) && (abs(y-old_y)<=threshold) && (abs(z-old_z)<=threshold))
 	{
+		PORTD &= ~(1<<ind);
 		return true;
 	}
 	else
 	{
+		PORTD |= (1<<ind);
+		//PORTD &= ~(1<<red) & ~(1<<green) & ~(1<<ir);
 		return false;
 	}
 }
