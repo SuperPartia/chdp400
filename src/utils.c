@@ -18,7 +18,7 @@ void initAll() {
 
 	DDRD = (1 << red) | (1 << green) | (1 << ir) | (1 << ind);
 	initTimer0();
-	initTimer1(15624);
+	initTimer1();
 
 }
 

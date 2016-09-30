@@ -88,9 +88,7 @@ ISR (TIMER0_OVF_vect)  // timer0 overflow interrupt
 void initTimer1()
 {
 	TCCR1B |= (1 << WGM12);
-	// Mode 4, CTC on OCR1A
 	TIMSK |= (1 << OCIE1A);
-	//Set interrupt on compare match
 }
 
 void startTimer1(int measurementT)
@@ -115,7 +113,14 @@ uint16_t stopTimer1()
 
 ISR (TIMER1_COMPA_vect)
 {
-	measureFlag = false;
+	static uint8_t subCounter = 1;
+	if(subCounter == measureCycles)
+	{
+		subCounter = 1;
+		measureFlag = false;
+		return;
+	}
+	subCounter++;
 }
 
 
