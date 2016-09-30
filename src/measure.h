@@ -8,7 +8,6 @@
 #ifndef MEASURE_H_
 #define MEASURE_H_
 
-void measure_loop(uint16_t *samplingT, int *measurementTime,
-		uint8_t *mode);
+void measure_loop(uint16_t *samplingT, uint16_t *repeats, uint8_t *mode, uint8_t *threshold);
 
 #endif /* MEASURE_H_ */

@@ -8,8 +8,9 @@
 #ifndef TIMER_H_
 #define TIMER_H_
 
-volatile bool samplingReady;
+volatile bool samplingFlag;
 volatile bool measureFlag;
+volatile bool blockFlag;
 
 void initTimer0();
 void startTimer0(uint16_t samplingT);

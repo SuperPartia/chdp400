@@ -45,7 +45,7 @@ void startTimer0(uint16_t samplingT)
 	//resid - t
 	//256   - 262.1
 	TCNT0 = 0xFF - sampleResid;
-	TCCR0 |= 5; //0,262144
+	TCCR0 |= 5; //0,262144 TODO
 
 }
 
@@ -65,17 +65,19 @@ ISR (TIMER0_OVF_vect)  // timer0 overflow interrupt
 	{
 		TCNT0 = 0xFF - sampleResid;
 		subCounter = 0;
-//		if (_working == true)
-//		{
-			if (samplingReady == false)
+
+			if (samplingFlag == false)
 			{
-				samplingReady = true;
+				if(blockFlag)
+				{
+					displayString("error! Block flag is true!");
+				}
+				samplingFlag = true;
 			}
 			else
 			{
-		//		displayString("error!");
+				displayString("error!");
 			}
-//		}
 		return;
 	}
 	subCounter ++;
@@ -86,9 +88,7 @@ ISR (TIMER0_OVF_vect)  // timer0 overflow interrupt
 void initTimer1()
 {
 	TCCR1B |= (1 << WGM12);
-	// Mode 4, CTC on OCR1A
 	TIMSK |= (1 << OCIE1A);
-	//Set interrupt on compare match
 }
 
 void startTimer1(int measurementT)
@@ -113,7 +113,14 @@ uint16_t stopTimer1()
 
 ISR (TIMER1_COMPA_vect)
 {
-measureFlag = false;
+	static uint8_t subCounter = 1;
+	if(subCounter == measureCycles)
+	{
+		subCounter = 1;
+		measureFlag = false;
+		return;
+	}
+	subCounter++;
 }
 
 

@@ -6,76 +6,72 @@
  */
 #include "includes.h"
 
-uint16_t do_measure(bool receiver, uint16_t *samplingT)
+uint16_t do_measure(bool receiver, uint16_t *samplingT, bool *DetectMove)
 {
+
+	blockFlag = false;
+	while(!(samplingFlag));
+	samplingFlag = false;
+
 	uint16_t value;
 	value = adcRead(receiver);
-	while(!(samplingReady));
-	samplingReady = false;
-	sendData(value, true);
+
+	if(*DetectMove)
+		sendData(value, true);
+	else
+		sendData(0, true);
+
+	blockFlag = true;
 	return value;
 }
 
-void measure_loop(uint16_t *samplingT, int *measurementTime,
-		uint8_t *mode)
+void measure_loop(uint16_t *samplingT, uint16_t *repeats, uint8_t *mode, uint8_t *threshold)
 {
+	uint16_t repeatsCounter = 0;
 	bool recieverMode = *mode & (1<<6);
 	bool diodeMode = *mode & (1<<3);
-	bool channelSwitch = !(*mode & (1<<4));
+	bool receiver;// 0 red receiver
+	if(*mode & (1<<4))
+	{
+		receiver = (*mode & (1<<0)) && (*mode & (1<<5));
+	}
+	else //czerwony nie zezwolony
+	{
+		receiver = 1;
+	}
+
 	uint8_t diodesAmount = 0;
 	uint8_t transistorsAmount = 0;
-	uint16_t value;
 
-	for (uint8_t diode = 0; diode < 3; diode++) if (*mode & (1<<diode)) diodesAmount++;
+	for (uint8_t diode = 0; diode < 3; diode++)
+		if (*mode & (1<<diode)) diodesAmount++;
+
 	transistorsAmount = (*mode & (1<<4)) && (*mode & (1<<5));
-	if(!diodesAmount) return;
-	if(!(*mode & (1<<4)) && !(*mode & (1<<5))) return; // no transistors
-	startTimer1(*measurementTime);
-	measureFlag = true;
+	//TODO move above to init measurement
 
-	while(measureFlag){
+	bool DetectMove = true;
 
-		if(diodeMode)
-		{
-			for (uint8_t diode = ir; diode <= red; diode++) {
-				if(!(*mode & (1<<(diode-ir)))) continue;
+	do { //measureFlag
+		for (uint8_t diode = ir; diode <= red; diode++) {
+			if(!(*mode & (1<<(diode-ir)))) continue;
 
-				sendData(diode-ir, false);
+			measureFlag = true;
+			do { // tu różnica z poprzednim
+
 				PORTD |= (1<<diode);
 
-				sendData(channelSwitch, false);
-				value = do_measure(channelSwitch, samplingT);
+				sendData(diode-ir, false);
+				sendData(receiver, false);
+
+				do_measure(receiver, samplingT, &DetectMove);
 
 				if(recieverMode && transistorsAmount)
-					channelSwitch = ! channelSwitch;
+					receiver = ! receiver;
 
-				PORTD &= (1<<diode);
-			}
-			if (!recieverMode && transistorsAmount) channelSwitch = !channelSwitch;
+				PORTD &= ~(1<<diode);
+			} while (measureFlag && !diodeMode);
+			if (!recieverMode && transistorsAmount) receiver = !receiver;
 		}
-
-
-
-		else
-		{
-			for (uint8_t diode = ir; diode <= red; diode++) {
-				if(!(*mode & (1<<(diode-ir)))) continue;
-				for (uint8_t i = 0; i < diodesAmount; i++) { // tu różnica z poprzednim
-
-					sendData(diode-ir, false);
-					PORTD |= (1<<diode);
-
-					sendData(channelSwitch, false);
-					value = do_measure(channelSwitch, samplingT);
-
-					if(recieverMode && transistorsAmount)
-						channelSwitch = ! channelSwitch;
-
-					PORTD &= (1<<diode);
-				}
-				if (!recieverMode && transistorsAmount) channelSwitch = !channelSwitch;
-			}
-		}
-	}
-	stopTimer1();
+		repeatsCounter++;
+	} while(repeatsCounter != *repeats);
 }

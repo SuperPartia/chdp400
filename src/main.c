@@ -1,6 +1,6 @@
 #include "includes.h"
 #define F_CPU 1000000
-volatile uint8_t repeatsCount;
+
 volatile bool repeatHappened = false;
 
 
@@ -10,6 +10,7 @@ int main(void) {
 
 	uint16_t samplingT = 0;
 	int measurementTime = 0;
+	uint16_t repeats = 0;
 	uint8_t mode = 0;
 
 	bool accRange[] = {1, 0};
@@ -18,20 +19,16 @@ int main(void) {
 
 	initAll();
 
-	setMeasuringMode(accRange, accMode);
+	setAccelerometerMode(accRange, accMode);
 
 	// this loop allows the uC to work continously, even after finishing the measurement, it will act like restarted
-	runConfig(&samplingT, &measurementTime, &mode);
+	runConfig(&samplingT, &measurementTime, &repeats, &mode);
 	startTimer0(samplingT);
+	startTimer1(measurementTime);
 	displayString("data = [");
-	while (1) {
+	//starting data string for further processing
+	measure_loop(&samplingT, &repeats, &mode, &threshold);
 
-		while(detectMove(threshold))
-		{
-		 //starting data string for further processing
-		measure_loop(&samplingT, &measurementTime, &mode);
-
-		}
-	}
+	displayString("];");
 
 }

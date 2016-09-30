@@ -97,7 +97,7 @@ ISR(USART_RXC_vect)
 		sprintf(usart_buffer, "%d", data);
 		sendToUc(false);
 		while(usart_buffer_ind);
-		if (endline) //if it's 2, then not. but if it's 3 it's ok
+		if (endline)
 		strncpy(usart_buffer, ";", uartBufferSize);
 		else
 		strncpy(usart_buffer, " ", uartBufferSize);
